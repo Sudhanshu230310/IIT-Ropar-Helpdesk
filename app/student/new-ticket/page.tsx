@@ -26,16 +26,17 @@ export default function NewTicketPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    categoryId: '',
-    priority: 'MEDIUM',
+    subject: '',
+    message: '',
+    location: '',
+    category: '',
+    priority: 'Moderate',
+    contactNumber: '',
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get user session
         const sessionRes = await fetch('/api/auth/session');
         if (!sessionRes.ok) {
           router.push('/login');
@@ -45,7 +46,6 @@ export default function NewTicketPage() {
         const sessionData = await sessionRes.json();
         setUser(sessionData.user);
 
-        // Get categories
         const categoriesRes = await fetch('/api/categories');
         if (categoriesRes.ok) {
           const categoriesData = await categoriesRes.json();
@@ -78,7 +78,12 @@ export default function NewTicketPage() {
     setError(null);
 
     try {
-      if (!formData.title || !formData.description || !formData.categoryId) {
+      if (
+        !formData.subject ||
+        !formData.message ||
+        !formData.location ||
+        !formData.category
+      ) {
         setError('Please fill in all required fields');
         setSubmitting(false);
         return;
@@ -131,30 +136,30 @@ export default function NewTicketPage() {
                 </div>
               )}
 
+              {/* Subject */}
               <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">
-                  Title *
+                <label className="text-sm font-medium">
+                  Subject *
                 </label>
                 <Input
-                  id="title"
-                  name="title"
+                  name="subject"
                   placeholder="Brief title of the problem"
-                  value={formData.title}
+                  value={formData.subject}
                   onChange={handleChange}
                   disabled={submitting}
                   required
                 />
               </div>
 
+              {/* Message */}
               <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-medium">
+                <label className="text-sm font-medium">
                   Description *
                 </label>
                 <textarea
-                  id="description"
-                  name="description"
+                  name="message"
                   placeholder="Detailed description of the problem"
-                  value={formData.description}
+                  value={formData.message}
                   onChange={handleChange}
                   disabled={submitting}
                   required
@@ -163,14 +168,29 @@ export default function NewTicketPage() {
                 />
               </div>
 
+              {/* Location */}
               <div className="space-y-2">
-                <label htmlFor="categoryId" className="text-sm font-medium">
+                <label className="text-sm font-medium">
+                  Location *
+                </label>
+                <Input
+                  name="location"
+                  placeholder="Hostel / Block / Room No."
+                  value={formData.location}
+                  onChange={handleChange}
+                  disabled={submitting}
+                  required
+                />
+              </div>
+
+              {/* Category */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
                   Category *
                 </label>
                 <select
-                  id="categoryId"
-                  name="categoryId"
-                  value={formData.categoryId}
+                  name="category"
+                  value={formData.category}
                   onChange={handleChange}
                   disabled={submitting}
                   required
@@ -178,37 +198,47 @@ export default function NewTicketPage() {
                 >
                   <option value="">Select a category</option>
                   {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option key={category.id} value={category.name}>
                       {category.name}
                     </option>
                   ))}
                 </select>
               </div>
 
+              {/* Priority */}
               <div className="space-y-2">
-                <label htmlFor="priority" className="text-sm font-medium">
+                <label className="text-sm font-medium">
                   Priority
                 </label>
                 <select
-                  id="priority"
                   name="priority"
                   value={formData.priority}
                   onChange={handleChange}
                   disabled={submitting}
                   className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="LOW">Low</option>
-                  <option value="MEDIUM">Medium</option>
-                  <option value="HIGH">High</option>
+                  <option value="Low">Low</option>
+                  <option value="Moderate">Moderate</option>
+                  <option value="High">High</option>
                 </select>
               </div>
 
-              <div className="flex gap-4">
-                <Button
-                  type="submit"
+              {/* Contact Number */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Contact Number
+                </label>
+                <Input
+                  name="contactNumber"
+                  placeholder="Your contact number"
+                  value={formData.contactNumber}
+                  onChange={handleChange}
                   disabled={submitting}
-                  className="flex-1"
-                >
+                />
+              </div>
+
+              <div className="flex gap-4">
+                <Button type="submit" disabled={submitting} className="flex-1">
                   {submitting ? 'Creating...' : 'Create Ticket'}
                 </Button>
                 <Button

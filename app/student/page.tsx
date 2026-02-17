@@ -50,6 +50,7 @@ export default function StudentDashboard() {
         const ticketsRes = await fetch('/api/tickets');
         if (ticketsRes.ok) {
           const ticketsData = await ticketsRes.json();
+          console.log('Fetched tickets:', ticketsData);
           setTickets(ticketsData.tickets || []);
         } else {
           setError('Failed to load tickets');

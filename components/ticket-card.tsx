@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/button';
 
 interface TicketCardProps {
   id: string;
-  title: string;
-  description: string;
+  subject: string;
+  message: string;
   status: string;
   priority: string;
-  category: { name: string };
+  category: string;
   createdAt: string;
   assignedTo?: { name: string };
   onVerify?: (ticketId: string) => void;
@@ -34,8 +34,8 @@ const priorityColors: Record<string, string> = {
 
 export function TicketCard({
   id,
-  title,
-  description,
+  subject,
+  message,
   status,
   priority,
   category,
@@ -49,7 +49,7 @@ export function TicketCard({
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg truncate">{title}</CardTitle>
+            <CardTitle className="text-lg truncate">{subject}</CardTitle>
             <CardDescription className="text-sm mt-1">
               {new Date(createdAt).toLocaleDateString()}
             </CardDescription>
@@ -62,10 +62,10 @@ export function TicketCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-sm text-slate-600 line-clamp-2">{description}</p>
+        <p className="text-sm text-slate-600 line-clamp-2">{message}</p>
         
         <div className="flex flex-wrap gap-2">
-          <Badge variant="secondary">{category.name}</Badge>
+          <Badge variant="secondary">{category}</Badge>
           <Badge className={priorityColors[priority] || priorityColors.MEDIUM}>
             {priority}
           </Badge>
