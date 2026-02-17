@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url  = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          String    @default("STUDENT") // "STUDENT", "ADMIN", "WORKER"
+  rollNumber    String?   // For students
+  contactNumber String?
+  fieldOfWork   String?   // For workers: "Electrical", "Civil", "IT", etc.
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  tickets       Ticket[]  @relation("StudentTickets")
+  assignedWork  Ticket[]  @relation("WorkerTickets")
+  adminTickets  Ticket[]  @relation("AdminTickets")
+  assignments   Assignment[]
+  otps          OTP[]
+}
+
+model Ticket {
+  id              String    @id @default(cuid())
+  studentId       String
+  workerId        String?
+  adminId         String?
+  status          String    @default("Pending") // Pending, Assigned, Completed, VerificationPending, Done
+  category        String    // "Works & Estate" or "IT Helpdesk" subcategories
+  name            String
+  email           String
+  priority        String    // "Low", "Moderate", "High"
+  location        String
+  contactNumber   String
+  subject         String
+  message         String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  completedAt     DateTime?
+
+  // Relations
+  student         User      @relation("StudentTickets", fields: [studentId], references: [id], onDelete: Cascade)
+  worker          User?     @relation("WorkerTickets", fields: [workerId], references: [id], onDelete: SetNull)
+  admin           User?     @relation("AdminTickets", fields: [adminId], references: [id], onDelete: SetNull)
+  assignment      Assignment?
+  otps            OTP[]
+}
+
+model Assignment {
+  id          String    @id @default(cuid())
+  ticketId    String    @unique
+  workerId    String
+  status      String    @default("Assigned") // Assigned, InProgress, Completed
+  assignedAt  DateTime  @default(now())
+  completedAt DateTime?
+
+  // Relations
+  ticket      Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  worker      User      @relation(fields: [workerId], references: [id], onDelete: Cascade)
+}
+
+model OTP {
+  id        String    @id @default(cuid())
+  ticketId  String
+  studentId String
+  otpCode   String
+  expiresAt DateTime
+  used      Boolean   @default(false)
+  usedAt    DateTime?
+
+  // Relations
+  ticket    Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  student   User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id    String  @id @default(cuid())
+  name  String
+  type  String  // "WorksAndEstate" or "ITHelpdesk"
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+}
