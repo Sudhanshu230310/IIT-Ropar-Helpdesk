@@ -23,12 +23,12 @@ export function AdminHeader({ userName }: AdminHeaderProps) {
           <Link href="/" className="text-2xl font-bold text-white hover:text-slate-200">
             IIT Ropar
           </Link>
-          <nav className="flex items-center gap-4">
+          <nav className="flex  items-center gap-4">
             <Link href="/admin">
-              <Button variant="ghost">Pending Tickets</Button>
+              <Button className='text-gray-200' variant="ghost">Pending Tickets</Button>
             </Link>
             <Link href="/admin/workers">
-              <Button variant="ghost">Manage Workers</Button>
+              <Button className='text-gray-200' variant="ghost">Manage Workers</Button>
             </Link>
             <div className="flex items-center gap-3 pl-4 border-l border-slate-700">
               <span className="text-sm text-slate-400">{userName} (Admin)</span>
